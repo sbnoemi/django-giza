@@ -9,7 +9,7 @@ with open('README.rst') as file:
 
 setup(
     name='django-giza',
-    version="0.1",
+    version="0.1.0",
     author='Anentropic',
     author_email='ego@anentropic.com',
     description="Autodoc all modules from a Django project's INSTALLED_APPS for Sphinx",
