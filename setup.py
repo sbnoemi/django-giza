@@ -4,17 +4,17 @@ from setuptools import setup, find_packages
 
 
 with open('README.rst') as file:
-        long_description = file.read()
+    long_description = file.read()
 
 
 setup(
-    name='django-sphinx-autodoc',
-    version="0.2",
-    author='Adrien Lemaire',
-    author_email='lemaire.adrien@gmail.com',
-    description='Autodoc all apps from a project to Sphinx',
+    name='django-giza',
+    version="0.1",
+    author='Anentropic',
+    author_email='ego@anentropic.com',
+    description="Autodoc all modules from a Django project's INSTALLED_APPS for Sphinx",
     long_description=long_description,
-    url='http://github.com/Fandekasp/django-sphinx-autodoc',
+    url='https://github.com/anentropic/giza',
     packages=find_packages(),
     include_package_data=True,
     classifiers=[
