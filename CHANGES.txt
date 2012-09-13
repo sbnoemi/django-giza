@@ -1,1 +1,1 @@
-v0.1.0, 2012-09-13 -- Initial release.
+v0.1.2, 2012-09-13 -- Small refactor of setting names and docs fixes.

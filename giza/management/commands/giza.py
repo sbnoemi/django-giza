@@ -190,18 +190,18 @@ class Command(BaseCommand):
         try:
             docs_root = os.path.join(PROJECT_ROOT, args[0])
         except IndexError:
-            docs_root = getattr(settings, "AUTODOC_ROOT", os.path.join(PROJECT_ROOT, "docs"))
+            docs_root = getattr(settings, "GIZA_DOCS_ROOT", os.path.join(PROJECT_ROOT, "docs"))
 
-        master_doc = getattr(settings, "AUTODOC_MASTER_DOC", "index.rst")
-        filename = getattr(settings, "AUTODOC_FILENAME", "auto_modules")
-        doc_title = getattr(settings, "AUTODOC_DOC_TITLE", "Python modules")
-        excluded_apps = getattr(settings, "AUTODOC_EXCLUDED_APPS", [
+        master_doc = getattr(settings, "GIZA_INDEX_DOC", "index.rst")
+        filename = getattr(settings, "GIZA_FILENAME", "auto_modules")
+        doc_title = getattr(settings, "GIZA_DOC_TITLE", "Python modules")
+        excluded_apps = getattr(settings, "GIZA_EXCLUDED_APPS", [
             'django.*',
         ])
-        excluded_modules = getattr(settings, "AUTODOC_EXCLUDED_MODULES", [
+        excluded_modules = getattr(settings, "GIZA_EXCLUDED_MODULES", [
             "__init__.py",
         ])
-        automodule_options = getattr(settings, "AUTODOC_AUTOMODULE_OPTIONS", [
+        automodule_options = getattr(settings, "GIZA_AUTOMODULE_OPTIONS", [
             "deprecated",
             "members",
             "private-members",

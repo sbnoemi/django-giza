@@ -17,22 +17,23 @@ in your settings.INSTALLED_APP.
 If you're using Django with Sphinx and want to autodoc all these apps in a wink
 of an eye, then this app is for you.
 
-A good combinaison for documenting your project would be:
+A good combination for documenting your project would be:
  - **sphinx**
- - **django-sphinx-autodoc** to generate the doc from your applications
+ - **cartouche** to avoid polluting your docstrings with rst syntax
+ - **django-giza** to generate the doc from your applications
  - **django-sphinxdoc** to integrate the sphinx doc in your website
 
 
 How it works
 ------------
 
-It will scrape all your .py files in each application listed by INSTALLED_APP,
+It will scrape all your .py files in each application listed by INSTALLED_APPS,
 then add automodules in your PROJECT/SPHINX_ROOT/auto_modules.rst.
 
 You will then see your applications grouped in 2 different categories:
 
-- **internal application** is an application located in your project directory
-- **external application** is an app which is somewhere in your pythonpath
+- **Project Apps** are applications located in your project directory
+- **3rd Party Apps** are apps which are somewhere in your pythonpath
   (preferably in your virtualenv)
 
 
@@ -40,33 +41,73 @@ Good Practices
 --------------
 
 Add a docstring in your application's ``__init__.py`` file to describe it.
-django-sphinx-autodoc will automatically scrape it for you (although
-``__init.__.py`` files are excluded by default)
+django-giza will automatically scrape it for you (although ``__init.__.py``
+files are excluded by default...)
 
 
 Install
 -------
 
-``$ pip install django-sphinx-autodoc``
+``$ pip install django-giza``
 
 
 Usage
 -----
 
-``$ ./manage.py sphinx_autodoc``
+``$ ./manage.py giza``
+
+You can also specify the relative path to your docs root:
+
+``$ ./manage.py giza private/documentation``
 
 
 Settings
 --------
 
-You can modify some of the settings used by django-sphinx-autodoc:
+You can modify some of the settings used by django-giza:
 
-- **DS_ROOT**: root path for documentation, absolute path required (defaults to "PROJECT_ROOT/docs")
-- **DS_MASTER_DOC**: name of your master document (defaults to "index.rst")
-- **DS_FILENAME**: name for the modules (defaults to "auto_modules.rst")
-- **DS_DOC_TITLE**: title for the modules page (defaults to "Python modules")
-- **DS_EXCLUDED_APPS**: list of applications to exclude (defaults to [])
-- **DS_EXCLUDED_MODULES**: list of files to exclude (default to ["\_\_init\_\_.py"])
+- **GIZA_DOCS_ROOT**:
+	Root path for documentation (absolute path required).
+	  
+	defaults to:
+	  	``"PROJECT_ROOT/docs"``
+
+- **GIZA_INDEX_DOC**:
+	Name of your master document.
+
+	defaults to:
+		``"index.rst"``
+
+- **GIZA_FILENAME**:
+	Name for the generated modules doc.
+
+	defaults to:
+		``"auto_modules"``
+
+- **GIZA_DOC_TITLE**:
+	Title for the modules page.
+
+  	defaults to:
+		``"Python modules"``
+
+- **GIZA_EXCLUDED_APPS**:
+	List of applications to exclude. Can use wildcard at the end.
+
+  	defaults to:
+    	``["django.*"]``
+
+- **GIZA_EXCLUDED_MODULES**:
+	List of filenames to exclude.
+ 
+  	defaults to:
+    	``["__init__.py"]``
+
+- **GIZA_AUTOMODULE_OPTIONS**:
+	List of options to the `automodule` directive, such as
+	"private-members" (without colon delimiters)
+
+  	defaults to:
+		``["deprecated", "members", "private-members", "special-members", "show-inheritance"]``
 
 
 TODO
@@ -74,4 +115,3 @@ TODO
 
 - Write tests
 - improve the not_relevant stuff to auto exclude a file without class or def
-- Django command extension to update the autodoc

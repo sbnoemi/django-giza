@@ -1,5 +1,5 @@
 *.pyc
 *.swp
+*.egg-info
 README.html
-django_sphinx_autodoc.egg-info
 dist
