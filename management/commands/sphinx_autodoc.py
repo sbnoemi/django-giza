@@ -13,6 +13,12 @@ import os
 import re
 
 
+def get_module_dirpath(module_name):
+    return os.path.realpath(os.path.dirname(__import__(module_name).__file__))
+
+PROJECT_ROOT = get_module_dirpath(os.environ['DJANGO_SETTINGS_MODULE'])
+
+
 class ModulesWriter(object):
     """
     Generates an auto_modules.rst file referencing all the app's automodules
@@ -105,6 +111,7 @@ class ModulesWriter(object):
             template.extend(map(lambda o: "    :%s:" % o, self.automodule_options))
             template.append("")
         self.lines.extend(template)
+        # TODO: internal/external
 
 
 class App(object):
@@ -116,35 +123,31 @@ class App(object):
         self.name = name
         self.excluded_modules = excluded_modules
 
-        self.is_internal = True
+        self.is_internal = os.path.exists(os.path.join(PROJECT_ROOT, *name.split('.')))
         self.modules = self.get_modules()
 
     def get_modules(self):
         """Scan the repository for any python files"""
-        try:
-            modules = [name.split(".py")[0] for name in os.listdir(self.name)
-                if name not in self.excluded_modules and
-                   name.endswith(".py")]
-            # Remove all irrelevant modules. A module is relevant if he
-            # contains a function or class
-            not_relevant = []
-            for module in modules:
-                f_module = open("%s/%s.py" % (self.name, module), "r")
-                content = f_module.read()
-                f_module.close()
-                keywords = ["def", "class"]
-                relevant = sum([value in content for value in keywords])
-                if not relevant:
-                    not_relevant.append(module)
-                    print "%s.%s not relevant, removed" % (self.name, module)
-            for module in not_relevant:
-                modules.remove(module)
-            return modules
-        except OSError:
-            # Currently we just add internal apps (located within the project)
-            # External app are ignored
-            self.is_internal = False
-            return []
+        module_path = get_module_dirpath(self.name)
+        for name in os.listdir(module_path):
+            if name not in self.excluded_modules and name.endswith(".py"):
+               modules = name.split(".py")[0]
+        # Remove all irrelevant modules. A module is relevant if he
+        # contains a function or class
+        not_relevant = []
+        for module in modules:
+            f_module = open(os.path.join(module_path, "%s.py" % module), "r")
+            content = f_module.read()
+            f_module.close()
+            # TODO: can we introspect this instead??
+            keywords = ["def", "class"]
+            relevant = sum([value in content for value in keywords])
+            if not relevant:
+                not_relevant.append(module)
+                print "%s.%s not relevant, removed" % (self.name, module)
+        for module in not_relevant:
+            modules.remove(module)
+        return modules
 
 
 class Command(BaseCommand):
@@ -152,8 +155,6 @@ class Command(BaseCommand):
     help = 'Closes the specified poll for voting'
 
     def handle(self, *args, **options):
-        PROJECT_ROOT = os.path.realpath(os.path.dirname(__import__(os.environ['DJANGO_SETTINGS_MODULE']).__file__))
-
         # Define some variables
         try:
             docs_root = os.path.join(PROJECT_ROOT, args[0])
