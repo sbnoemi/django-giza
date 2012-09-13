@@ -39,9 +39,9 @@ You will then see your applications grouped in 2 different categories:
 Good Practices
 --------------
 
-Add a docstring in your application's ``\_\_init\_\_.py`` file to describe it.
+Add a docstring in your application's ``__init__.py`` file to describe it.
 django-sphinx-autodoc will automatically scrape it for you (although
-``\_\_init.\_\_.py`` files are excluded by default)
+``__init.__.py`` files are excluded by default)
 
 
 Install
