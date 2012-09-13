@@ -12,6 +12,7 @@ setup(
     version="0.1.0",
     author='Anentropic',
     author_email='ego@anentropic.com',
+    license='LICENSE.txt',
     description="Autodoc all modules from a Django project's INSTALLED_APPS for Sphinx",
     long_description=long_description,
     url='https://github.com/anentropic/giza',
