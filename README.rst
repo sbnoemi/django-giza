@@ -96,7 +96,7 @@ You can modify some of the settings used by django-giza:
 	List of applications to exclude. Can use wildcard at the end.
 
   	defaults to:
-    	``["django.*"]``
+    	``["django.*", "giza"]``
 
 - **GIZA_EXCLUDED_MODULES**:
 	List of filenames to exclude.

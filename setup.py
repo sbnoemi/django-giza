@@ -9,7 +9,7 @@ with open('README.rst') as file:
 
 setup(
     name='django-giza',
-    version="0.1.3",
+    version="0.1.4",
     author='Anentropic',
     author_email='ego@anentropic.com',
     license='LICENSE.txt',

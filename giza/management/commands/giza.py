@@ -60,8 +60,8 @@ class ModulesWriter(object):
         """
         Write the created list in the new file
         """
-        self.add_section(self, "Project Apps", self.internal_lines)
-        self.add_section(self, "3rd Party Apps", self.external_lines)
+        self.add_section("Project Apps", self.internal_lines)
+        self.add_section("3rd Party Apps", self.external_lines)
 
         f = open(self.filename, "w+")
         f.writelines("%s\n" % l for l in self.lines)
@@ -89,7 +89,7 @@ class ModulesWriter(object):
                 if ":maxdepth: 2" in line:
                     master_doc_lines.insert(i + 2, "    %s\n" % self.filename)
                     break
-        master_doc = open(master_doc, "w")
+        master_doc = open(master_doc_path, "w")
         master_doc.writelines(master_doc_lines)
         master_doc.close()
 
@@ -160,9 +160,10 @@ class App(object):
     def get_modules(self):
         """Scan the repository for any python files"""
         module_path = get_module_dirpath(self.name)
+        modules = []
         for name in os.listdir(module_path):
             if name not in self.excluded_modules and name.endswith(".py"):
-               modules = name.split(".py")[0]
+               modules.append(name.split(".py")[0])
         # Remove all irrelevant modules. A module is relevant if he
         # contains a function or class
         not_relevant = []
@@ -197,6 +198,7 @@ class Command(BaseCommand):
         doc_title = getattr(settings, "GIZA_DOC_TITLE", "Python modules")
         excluded_apps = getattr(settings, "GIZA_EXCLUDED_APPS", [
             'django.*',
+            'giza',
         ])
         excluded_modules = getattr(settings, "GIZA_EXCLUDED_MODULES", [
             "__init__.py",
