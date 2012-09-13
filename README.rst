@@ -50,6 +50,8 @@ Install
 
 ``$ pip install django-giza``
 
+Then add ``giza`` to your INSTALLED_APPS in settings.py
+
 
 Usage
 -----

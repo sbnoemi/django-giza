@@ -117,7 +117,7 @@ class ModulesWriter(object):
         """
         for name in search_apps:
             if not self._should_exclude(name):
-                modules_writer.add_app(App(name, self.excluded_modules))
+                self.add_app(App(name, self.excluded_modules))
 
     def add_app(self, app):
         """
