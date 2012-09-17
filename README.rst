@@ -92,6 +92,18 @@ You can modify some of the settings used by django-giza:
   	defaults to:
 		``"Python modules"``
 
+- **GIZA_INTERNAL_TITLE**:
+	Title for the internal apps section.
+
+  	defaults to:
+		``"Project Apps"``
+
+- **GIZA_EXTERNAL_TITLE**:
+	Title for the external apps section.
+
+  	defaults to:
+		``"3rd Party Apps"``
+
 - **GIZA_EXCLUDED_APPS**:
 	List of applications to exclude. Can use wildcard at the end.
 

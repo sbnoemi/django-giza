@@ -45,9 +45,12 @@ class ModulesWriter(object):
     Generates an auto_modules.rst file referencing all the app's automodules
     """
 
-    def __init__(self, filename, doc_title, automodule_options, excluded_modules, excluded_apps):
+    def __init__(self, filename, doc_title, internal_title, external_title, automodule_options,
+                 excluded_modules, excluded_apps):
         self.filename = filename
         self.doc_title = doc_title
+        self.internal_title = internal_title
+        self.external_title = external_title
         self.automodule_options = automodule_options
         self.excluded_modules = excluded_modules
         self.excluded_apps = excluded_apps# we'll also accept wildcard, eg "django.contrib.*"
@@ -60,8 +63,8 @@ class ModulesWriter(object):
         """
         Write the created list in the new file
         """
-        self.add_section("Project Apps", self.internal_lines)
-        self.add_section("3rd Party Apps", self.external_lines)
+        self.add_section(self.internal_title, self.internal_lines)
+        self.add_section(self.external_title, self.external_lines)
 
         f = open(self.filename, "w+")
         f.writelines("%s\n" % l for l in self.lines)
@@ -196,6 +199,8 @@ class Command(BaseCommand):
         master_doc = getattr(settings, "GIZA_INDEX_DOC", "index.rst")
         filename = getattr(settings, "GIZA_FILENAME", "auto_modules")
         doc_title = getattr(settings, "GIZA_DOC_TITLE", "Python modules")
+        internal_title = getattr(settings, "GIZA_INTERNAL_TITLE", "Project Apps")
+        external_title = getattr(settings, "GIZA_EXTERNAL_TITLE", "3rd Party Apps")
         excluded_apps = getattr(settings, "GIZA_EXCLUDED_APPS", [
             'django.*',
             'giza',

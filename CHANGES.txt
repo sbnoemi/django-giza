@@ -1,1 +1,1 @@
-v0.1.4, 2012-09-13 -- First version that actually works :)
+v0.1.5, 2012-09-17 -- Couple of extra configurable settings
