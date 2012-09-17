@@ -45,8 +45,9 @@ class ModulesWriter(object):
     Generates an auto_modules.rst file referencing all the app's automodules
     """
 
-    def __init__(self, filename, doc_title, internal_title, external_title, automodule_options,
-                 excluded_modules, excluded_apps):
+    def __init__(self, docs_root, filename, doc_title, internal_title, external_title,
+                 automodule_options, excluded_modules, excluded_apps):
+        self.docs_root = docs_root
         self.filename = filename
         self.doc_title = doc_title
         self.internal_title = internal_title
@@ -66,7 +67,7 @@ class ModulesWriter(object):
         self.add_section(self.internal_title, self.internal_lines)
         self.add_section(self.external_title, self.external_lines)
 
-        f = open(self.filename, "w+")
+        f = open(os.path.join(self.docs_root, "%s.rst" % self.filename), "w+")
         f.writelines("%s\n" % l for l in self.lines)
         f.close()
 
@@ -75,7 +76,7 @@ class ModulesWriter(object):
         self.lines.extend(sphinx_heading(heading_level, title))
         self.lines.extend(lines)
 
-    def add_to_toc(self, master_doc_path):
+    def add_to_toc(self, master_doc_name):
         """
         Verifies that a "auto_modules" file is in the toctree, and appends it
         otherwise.
@@ -83,6 +84,7 @@ class ModulesWriter(object):
         Note:
             This method writes to the file at master_doc_path!
         """
+        master_doc_path = os.path.join(self.docs_root, "%s.rst" % master_doc_name)
         master_doc = open(master_doc_path, "r")
         master_doc_lines = master_doc.readlines()
 
@@ -90,7 +92,7 @@ class ModulesWriter(object):
             # append the new file name to the index.rst
             for i, line in enumerate(master_doc_lines):
                 if ":maxdepth: 2" in line:
-                    master_doc_lines.insert(i + 2, "    %s\n" % self.filename)
+                    master_doc_lines.insert(i + 2, "   %s\n" % self.filename)
                     break
         master_doc = open(master_doc_path, "w")
         master_doc.writelines(master_doc_lines)
@@ -196,7 +198,7 @@ class Command(BaseCommand):
         except IndexError:
             docs_root = getattr(settings, "GIZA_DOCS_ROOT", os.path.join(PROJECT_ROOT, "docs"))
 
-        master_doc = getattr(settings, "GIZA_INDEX_DOC", "index.rst")
+        master_doc = getattr(settings, "GIZA_INDEX_DOC", "index")
         filename = getattr(settings, "GIZA_FILENAME", "auto_modules")
         doc_title = getattr(settings, "GIZA_DOC_TITLE", "Python modules")
         internal_title = getattr(settings, "GIZA_INTERNAL_TITLE", "Project Apps")
@@ -217,12 +219,13 @@ class Command(BaseCommand):
         ])
 
         modules_writer = ModulesWriter(
-            filename=os.path.join(docs_root, "%s.rst" % filename),
+            docs_root=docs_root,
+            filename=filename,
             doc_title=doc_title,
             automodule_options=automodule_options,
             excluded_modules=excluded_modules,
             excluded_apps=excluded_apps,
         )
         modules_writer.add_apps(settings.INSTALLED_APPS)
-        modules_writer.add_to_toc(os.path.join(docs_root, master_doc))
+        modules_writer.add_to_toc(master_doc)
         modules_writer.write()
