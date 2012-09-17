@@ -11,6 +11,7 @@ from django.core.management.base import BaseCommand, CommandError
 from django.conf import settings
 import os
 import re
+import string
 
 
 def get_module_dirpath(module_name):
@@ -88,12 +89,31 @@ class ModulesWriter(object):
         master_doc = open(master_doc_path, "r")
         master_doc_lines = master_doc.readlines()
 
+        def next_is_blank(lines, i):
+            try:
+                next_is_blank = (lines[i+1].lstrip() == '')
+            except IndexError:
+                return False
+            else:
+                return next_is_blank
+
         if not self.filename in "".join(master_doc_lines):
             # append the new file name to the index.rst
             for i, line in enumerate(master_doc_lines):
                 if ":maxdepth: 2" in line:
-                    master_doc_lines.insert(i + 2, "   %s\n" % self.filename)
                     break
+            # add preceding blank line if needed
+            if not next_is_blank(master_doc_lines, i):
+                master_doc_lines.insert(i+1, "\n")
+            # add auto_modules line
+            master_doc_lines.insert(i+2, "   %s\n" % self.filename)
+            # add following blank line if needed
+            try:
+                following_char = master_doc_lines[i+3][0]
+            except IndexError:
+                following_char = ''
+            if not following_char in string.whitespace:
+                master_doc_lines.insert(i+3, "\n")
         master_doc = open(master_doc_path, "w")
         master_doc.writelines(master_doc_lines)
         master_doc.close()
@@ -222,6 +242,8 @@ class Command(BaseCommand):
             docs_root=docs_root,
             filename=filename,
             doc_title=doc_title,
+            internal_title=internal_title,
+            external_title=external_title,
             automodule_options=automodule_options,
             excluded_modules=excluded_modules,
             excluded_apps=excluded_apps,
