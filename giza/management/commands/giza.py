@@ -46,7 +46,7 @@ class ModulesWriter(object):
     """
 
     def __init__(self, project_root, docs_root, filename, doc_title, internal_title, external_title,
-                 automodule_options, excluded_modules, excluded_apps, included_apps):
+                 automodule_options, excluded_modules, excluded_apps):
         self.project_root = project_root
         self.docs_root = docs_root
         self.filename = filename
