@@ -48,7 +48,7 @@ class ModulesWriter(object):
     """
 
     def __init__(self, project_root, docs_root, filename, doc_title, internal_title, external_title,
-                 automodule_options, excluded_modules, excluded_apps):
+                 automodule_options, excluded_modules, excluded_apps, included_apps):
         self.project_root = project_root
         self.docs_root = docs_root
         self.filename = filename
@@ -58,6 +58,7 @@ class ModulesWriter(object):
         self.automodule_options = automodule_options
         self.excluded_modules = excluded_modules
         self.excluded_apps = excluded_apps# we'll also accept wildcard, eg "django.contrib.*"
+        self.included_apps = included_apps# we'll also accept wildcard, eg "django.contrib.*"
 
         self.lines = self.make_head(self.doc_title)
         self.internal_lines = []
@@ -136,7 +137,17 @@ class ModulesWriter(object):
         for pattern in self.excluded_apps:
             if name == pattern or (pattern.endswith('*') and name.startswith(pattern[:-1])):
                 return True
-        return False
+        
+        # If we've defined included apps, anything not in the list should be excluded
+        if self.included_apps:
+            for pattern in self.included_apps:
+                if name == pattern or (pattern.endswith('*') and name.startswith(pattern[:-1])):
+                    return False
+            return True
+        
+        # If no included apps defined, any app that isn't explicitly excluded should be included
+        else:
+            return False
 
     def add_apps(self, search_apps):
         """
@@ -232,6 +243,8 @@ class Command(BaseCommand):
             'django.*',
             'giza',
         ])
+        included_apps = getattr(settings, "GIZA_INCLUDED_APPS", [
+        ])
         excluded_modules = getattr(settings, "GIZA_EXCLUDED_MODULES", [
             "__init__.py",
         ])
@@ -253,6 +266,7 @@ class Command(BaseCommand):
             automodule_options=automodule_options,
             excluded_modules=excluded_modules,
             excluded_apps=excluded_apps,
+            included_apps=included_apps,
         )
         modules_writer.add_apps(settings.INSTALLED_APPS)
         modules_writer.add_to_toc(master_doc)
